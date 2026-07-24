@@ -1,0 +1,21 @@
+{
+  "name": "Super Cool Notepad App",
+  "short_name": "Notepad",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://i.pinimg.com/1200x/76/71/9a/76719a71285b0dbde2e505df6b139514.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://i.pinimg.com/1200x/76/71/9a/76719a71285b0dbde2e505df6b139514.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
