@@ -1,6 +1,6 @@
 {
-  "name": "Super Cool Notepad App",
-  "short_name": "Notepad",
+  "name": "Chrome Clone XD",
+  "short_name": "Chrome",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
