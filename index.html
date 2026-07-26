@@ -3576,7 +3576,7 @@ z"/>
                                     </div>
                                     <div class="asset-info-ui">
                                         <div class="asset-name-ui">
-                                            <span id="display-name-ui">USD/BRL (OTC)</span></span>
+                                            <span id="display-name-ui">...</span></span>
                                             <i class="fa-solid fa-chevron-down chevron-down-currency"></i>
                                         </div>
                                         <div class="asset-payout-ui" id="payout-value-ui">95%</div>
@@ -4558,7 +4558,7 @@ z"/>
         const hudClose = document.getElementById('hud-close');
 
         let activeTarget = 'live';
-        let currentLiveVal = 1000.00;
+        let currentLiveVal = (Math.random() * (250 - 90) + 90).toFixed(2);
         let currentDemoVal = 10000.00;
 
         function getScrollLimit() {
