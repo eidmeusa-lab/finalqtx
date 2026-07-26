@@ -4137,7 +4137,7 @@ z"/>
                                     <div class="label-border">Investment</div>
                                     <div class="input-control">
                                         <button class="btn-control" id="invest-minus">−</button>
-                                        <input type="text" id="investment-input" class="investment-input" value="100 $" spellcheck="false" autocomplete="off" />
+                                        <input type="text" id="investment-input" class="investment-input" value="10 $" spellcheck="false" autocomplete="off" />
                                         <button class="btn-control" id="invest-plus">+</button>
                                     </div>
                                     <div class="switch-badge">Switch</div>
@@ -4248,7 +4248,7 @@ z"/>
             candleTimer: 5000,    
             updateInterval: 50,  
             volatility: 0.00020,        
-            startPrice: 0.70000,  //rightvalue   
+            startPrice: 0.80500,  //rightvalue   
             baseCandleWidth: 45,      
             candleSpacingRatio: 0.1, 
             bullishColor: 'white',
@@ -5508,7 +5508,7 @@ z"/>
                 e.stopPropagation();
                 if (investPlus.classList.contains('disabled')) return;
                 let current = getNumericValue(investmentInput.value);
-                let next = Math.min(MAX_AMOUNT, current + 10);
+                let next = Math.min(MAX_AMOUNT, current + 5);
                 investmentInput.value = formatWithCommas(next) + SUFFIX;
                 updatePayout(next);
             });
@@ -5519,7 +5519,7 @@ z"/>
                 e.stopPropagation();
                 if (investMinus.classList.contains('disabled')) return;
                 let current = getNumericValue(investmentInput.value);
-                let next = Math.max(MIN_AMOUNT, current - 10);
+                let next = Math.max(MIN_AMOUNT, current - 5);
                 investmentInput.value = formatWithCommas(next) + SUFFIX;
                 updatePayout(next);
             });
