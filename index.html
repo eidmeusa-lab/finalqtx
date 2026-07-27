@@ -55,6 +55,168 @@
 	        font-family: roboto;
         }
 
+
+
+
+
+
+
+
+		/* --- SAFARI PINNED SEARCH BAR & PERFECT CENTERED RELOAD CIRCLE STYLES --- */
+body, html {
+    background-color: #ffffff !important;
+}
+
+.broker-container {
+    background-color: #ffffff !important;
+}
+
+.site-main, .sidebar-left-nav {
+    will-change: transform;
+    transform-origin: top center;
+    position: relative;
+    z-index: 10 !important;
+}
+
+.sidebar-left-nav2 {
+    z-index: 99999999 !important;
+}
+
+.Main_header1 {
+    position: relative;
+    overflow: hidden;
+    background-color: #ffffff !important;
+}
+
+.url-bar10x {
+    transition: opacity 0.12s linear;
+    will-change: transform, opacity;
+    touch-action: none;
+    position: relative;
+    z-index: 15;
+}
+
+/* FIXED REFRESH OVERLAY */
+.ios-refresh-overlay {
+    position: fixed;
+    top: 6px;
+    left: 0;
+    width: 100%;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    will-change: transform, opacity;
+}
+
+.ios-refresh-overlay .refresh-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    font-size: 11px;
+    color: #6c757d;
+    gap: 4px;
+    width: 70px;
+}
+
+/* DEDICATED ICON BOX FOR 100% PERFECT CENTERING */
+.reload-icon-box {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ios-refresh-overlay .reload-circle-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
+}
+
+.ios-refresh-overlay .reload-circle-bg.active-pulse {
+    transform: scale(1);
+}
+
+.reload-spinner {
+    font-size: 18px;
+    color: #000;
+    will-change: transform;
+    z-index: 2;
+    position: relative;
+}
+
+/* RELOAD TEXT PLACED OUTSIDE & BELOW DARK CIRCLE */
+.ios-refresh-overlay .refresh-center span {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.ios-refresh-overlay .refresh-center.show-text span {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.ios-refresh-overlay .refresh-icon-btn {
+    font-size: 18px;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    will-change: transform, opacity;
+}
+
+/* THIN BLUE PROGRESS LINE */
+.ios-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background-color: #007aff;
+    z-index: 100;
+    opacity: 0;
+    will-change: width, opacity;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
         body, html {
             width: 100%;
             height: 100%;
@@ -6124,6 +6286,238 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.appendChild(historyOverlay);
     }
 });
+
+
+
+
+
+
+// --- SAFARI PINNED SEARCH BAR & PERFECT CENTERED RELOAD ICON SCRIPT ---
+document.addEventListener("DOMContentLoaded", function () {
+    const mainHeader1 = document.querySelector('.Main_header1');
+    const urlBar = document.querySelector('.url-bar10x');
+    const siteMain = document.querySelector('.site-main');
+    const sidebarNav = document.querySelector('.sidebar-left-nav');
+
+    if (mainHeader1 && urlBar && siteMain) {
+        // ----------------------------------------------------
+        // MANUAL DRAG CONTROL CONFIGURATION
+        // ----------------------------------------------------
+        const DRAG_CONFIG = {
+            siteMaxPull: 70,       // Max downward drag for site content
+            siteFriction: 0.012,   // Site resistance
+
+            urlBarMaxPull: 8,      // Independent max downward distance for search bar
+            urlBarFriction: 0.035, // Search bar resistance
+
+            iconMaxPull: 6,        // Max downward distance for top icons
+            iconFriction: 0.040,   // Icon resistance
+            
+            threshold: 65          // Pull distance needed to trigger refresh state
+        };
+
+        // 1. Inject Overlay into Body (With Reload Text Outside Dark Circle Box)
+        const overlayHTML = `
+            <div class="ios-refresh-overlay" id="ios-refresh-overlay">
+                <div class="refresh-icon-btn left-icon" id="btn-left-plus"><i class="fa-solid fa-plus"></i></div>
+                <div class="refresh-center" id="btn-center-reload">
+                    <div class="reload-icon-box">
+                        <div class="reload-circle-bg" id="reload-circle-bg"></div>
+                        <i class="fa-solid fa-rotate-right reload-spinner" id="reload-spinner"></i>
+                    </div>
+                    <span>Reload</span>
+                </div>
+                <div class="refresh-icon-btn right-icon" id="btn-right-cross"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('afterbegin', overlayHTML);
+        mainHeader1.insertAdjacentHTML('beforeend', `<div class="ios-progress-bar" id="ios-progress-bar"></div>`);
+
+        // 2. Element References
+        const refreshOverlay = document.getElementById('ios-refresh-overlay');
+        const reloadSpinner = document.getElementById('reload-spinner');
+        const circleBg = document.getElementById('reload-circle-bg');
+        const progressBar = document.getElementById('ios-progress-bar');
+        const btnLeft = document.getElementById('btn-left-plus');
+        const btnRight = document.getElementById('btn-right-cross');
+        const btnCenter = document.getElementById('btn-center-reload');
+
+        let startY = 0;
+        let sitePullDistance = 0;
+        let isDraggingUrlBar = false;
+
+        // Exponential Rubber Friction Calculations
+        function getSiteOffset(touchDelta) {
+            return DRAG_CONFIG.siteMaxPull * (1 - Math.exp(-touchDelta * DRAG_CONFIG.siteFriction));
+        }
+
+        function getUrlBarOffset(touchDelta) {
+            return DRAG_CONFIG.urlBarMaxPull * (1 - Math.exp(-touchDelta * DRAG_CONFIG.urlBarFriction));
+        }
+
+        function getIconOffset(touchDelta) {
+            return DRAG_CONFIG.iconMaxPull * (1 - Math.exp(-touchDelta * DRAG_CONFIG.iconFriction));
+        }
+
+        // 3. Touch Drag Listeners ATTACHED EXCLUSIVELY TO urlBar
+        urlBar.addEventListener('touchstart', (e) => {
+            isDraggingUrlBar = true;
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDraggingUrlBar || startY === 0) return;
+            
+            const currentY = e.touches[0].pageY;
+            const touchDelta = Math.max(0, currentY - startY);
+
+            if (touchDelta > 0) {
+                sitePullDistance = getSiteOffset(touchDelta);
+                const urlBarPullDistance = getUrlBarOffset(touchDelta);
+                const iconPullDistance = getIconOffset(touchDelta);
+                const progress = Math.min(1, sitePullDistance / DRAG_CONFIG.threshold);
+
+                // Slide site main & sidebar nav down
+                siteMain.style.transition = 'none';
+                siteMain.style.transform = `translateY(${sitePullDistance}px)`;
+
+                if (sidebarNav) {
+                    sidebarNav.style.transition = 'none';
+                    sidebarNav.style.transform = `translateY(${sitePullDistance}px)`;
+                }
+
+                // PIN SEARCH BAR: Counteract siteMain's translateY so urlBar stays pinned at top
+                const netUrlBarY = urlBarPullDistance - sitePullDistance;
+                urlBar.style.transition = 'none';
+                urlBar.style.transform = `translateY(${netUrlBarY}px)`;
+                urlBar.style.opacity = (1 - progress * 1.3).toString();
+
+                // Apply heavy resistance translation to overlay icons
+                refreshOverlay.style.transition = 'none';
+                refreshOverlay.style.transform = `translateY(${iconPullDistance}px)`;
+                refreshOverlay.style.opacity = Math.min(1, progress * 2).toString();
+
+                reloadSpinner.style.transform = `rotate(${progress * 360}deg)`;
+
+                // ----------------------------------------------------
+                // SEQUENCED ICON & TEXT STAGING
+                // ----------------------------------------------------
+
+                // Stage 1: Center Reload Icon appears
+                const centerProgress = Math.min(1, progress / 0.35);
+                btnCenter.style.transform = `scale(${centerProgress})`;
+                btnCenter.style.opacity = centerProgress.toString();
+
+                // Stage 2: Side Icons fly out horizontally
+                if (progress > 0.35) {
+                    const sideProgress = Math.min(1, (progress - 0.35) / 0.35);
+                    const flyDistance = (1 - sideProgress) * 45; 
+
+                    btnLeft.style.transform = `translateX(${flyDistance}px) scale(${sideProgress})`;
+                    btnLeft.style.opacity = sideProgress.toString();
+
+                    btnRight.style.transform = `translateX(-${flyDistance}px) scale(${sideProgress})`;
+                    btnRight.style.opacity = sideProgress.toString();
+                } else {
+                    btnLeft.style.opacity = '0';
+                    btnRight.style.opacity = '0';
+                }
+
+                // Stage 3: Circle BG & "Reload" Text pop at end
+                if (progress >= 0.75) {
+                    circleBg.classList.add('active-pulse');
+                    btnCenter.classList.add('show-text');
+                } else {
+                    circleBg.classList.remove('active-pulse');
+                    btnCenter.classList.remove('show-text');
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            if (!isDraggingUrlBar) return;
+
+            if (sitePullDistance >= DRAG_CONFIG.threshold * 0.75) {
+                circleBg.classList.add('active-pulse');
+                btnCenter.classList.add('show-text');
+
+                setTimeout(() => {
+                    // Smooth spring back reset for site body, URL Bar & icons
+                    const resetTransition = 'transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    siteMain.style.transition = resetTransition;
+                    siteMain.style.transform = 'translateY(0px)';
+
+                    if (sidebarNav) {
+                        sidebarNav.style.transition = resetTransition;
+                        sidebarNav.style.transform = 'translateY(0px)';
+                    }
+
+                    urlBar.style.transition = `${resetTransition}, opacity 0.22s ease`;
+                    urlBar.style.transform = 'translateY(0px)';
+                    urlBar.style.opacity = '1';
+
+                    refreshOverlay.style.transition = 'opacity 0.22s ease, transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    refreshOverlay.style.transform = 'translateY(0px)';
+                    refreshOverlay.style.opacity = '0';
+
+                    circleBg.classList.remove('active-pulse');
+                    btnCenter.classList.remove('show-text');
+
+                    // MULTI-STAGE VISUAL BLUE LINE ANIMATION
+                    progressBar.style.opacity = '1';
+                    progressBar.style.transition = 'width 0.08s ease-out';
+                    progressBar.style.width = '10%';
+
+                    const randomPauseMs = Math.floor(Math.random() * (200 - 50 + 1)) + 50;
+
+                    setTimeout(() => {
+                        progressBar.style.transition = 'width 0.75s cubic-bezier(0.1, 0.4, 0.2, 1)';
+                        progressBar.style.width = '100%';
+
+                        setTimeout(() => {
+                            progressBar.style.transition = 'opacity 0.25s ease';
+                            progressBar.style.opacity = '0';
+                            setTimeout(() => {
+                                progressBar.style.width = '0%';
+                            }, 250);
+                        }, 800);
+                    }, 80 + randomPauseMs);
+
+                }, 220);
+            } else {
+                // Early release reset
+                const springReset = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)';
+                siteMain.style.transition = springReset;
+                siteMain.style.transform = 'translateY(0px)';
+
+                if (sidebarNav) {
+                    sidebarNav.style.transition = springReset;
+                    sidebarNav.style.transform = 'translateY(0px)';
+                }
+
+                urlBar.style.transition = `${springReset}, opacity 0.28s ease`;
+                urlBar.style.transform = 'translateY(0px)';
+                urlBar.style.opacity = '1';
+
+                refreshOverlay.style.transition = 'all 0.28s cubic-bezier(0.25, 1, 0.5, 1)';
+                refreshOverlay.style.transform = 'translateY(0px)';
+                refreshOverlay.style.opacity = '0';
+
+                circleBg.classList.remove('active-pulse');
+                btnCenter.classList.remove('show-text');
+            }
+
+            startY = 0;
+            sitePullDistance = 0;
+            isDraggingUrlBar = false;
+        });
+    }
+});
+
+
+
+
+		
 
 
             </script> 
